@@ -1,143 +1,132 @@
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 public class MyArrayList<T> implements List<T> {
-    private T[] arr;
-    private int size;
-    private static final int DEFAULT_CAPACITY = 5;
+    private int size = 0;
+    private static final int DEFAULT_CAPACITY = 10;
+    private T[] array;
 
+    // Constructors
     public MyArrayList() {
-        arr = (T[]) new Object[DEFAULT_CAPACITY];
-        size = 0;
+        this(DEFAULT_CAPACITY);
     }
 
-    @Override
-    public void addElement(T item) {
-        if (size >= arr.length) {
-            increaseBuffer();
-        }
-        arr[size++] = item;
+    public MyArrayList(int initialCapacity) {
+        if (initialCapacity <= 0)
+            throw new IllegalArgumentException("Capacity must be positive: " + initialCapacity);
+        array = (T[]) new Object[initialCapacity];
     }
 
-    @Override
-    public void set(int index, T item) {
-        checkIndex(index);
-        arr[index] = item;
-    }
-
-    @Override
-    public void add(int index, T item) {
-        checkIndex(index);
-        if (size >= arr.length) {
-            increaseBuffer();
-        }
-        for (int i = size; i > index; i--) {
-            arr[i] = arr[i - 1];
-        }
-        arr[index] = item;
-        size++;
-    }
-
-    @Override
-    public void addFirst(T item) {
-        add(0, item);
-    }
-
-    @Override
-    public void addLast(T item) {
-        add(size, item);
-    }
-
-    @Override
-    public T getElement(int index) {
-        checkIndex(index);
-        return arr[index];
-    }
-
-    @Override
-    public T getFirst() {
-        return getElement(0);
-    }
-
-    @Override
-    public T getLast() {
-        return getElement(size - 1);
-    }
-
-    @Override
-    public void remove(int index) {
-        checkIndex(index);
-        for (int i = index; i < size - 1; i++) {
-            arr[i] = arr[i + 1];
-        }
-        size--;
-    }
-
-    @Override
-    public void removeFirst() {
-        remove(0);
-    }
-
-    @Override
-    public void removeLast() {
-        remove(size - 1);
-    }
-
+    // Returns the size of the array
     @Override
     public int size() {
         return size;
     }
 
-    @Override
-    public void sort() {
-        Arrays.sort(arr, 0, size);
-    }
-
-    @Override
-    public int indexOf(Object object) {
-        for (int i = 0; i < size; i++) {
-            if (arr[i].equals(object)) {
-                return i;
-            }
+    // Checks if memory size is sufficient, if not extends the size of the array
+    private void ensureCapacity() {
+        if (size == array.length) {
+            T[] newArray = (T[]) new Object[size * 2 + 1];
+            System.arraycopy(array, 0, newArray, 0, size);
+            array = newArray;
         }
-        return -1;
     }
 
+    // Adds an item to the end of the list
     @Override
-    public int lastIndexOf(Object object) {
-        for (int i = size - 1; i >= 0; i--) {
-            if (arr[i].equals(object)) {
-                return i;
-            }
-        }
-        return -1;
+    public void add(T item) {
+        ensureCapacity();
+        array[size++] = item;
     }
 
+    // Adds an item to the beginning of the list
     @Override
-    public boolean exists(Object object) {
-        return indexOf(object) != -1;
+    public void addFirst(T item) {
+        add(0, item);
     }
 
+    // Adds an item to the end of the list
     @Override
-    public Object[] toArray() {
-        return Arrays.copyOf(arr, size);
+    public void addLast(T item) {
+        add(item);
     }
 
+    // Adds an item at the specified index
+    @Override
+    public void add(int index, T item) {
+        if (index < 0 || index > size)
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        ensureCapacity();
+        System.arraycopy(array, index, array, index + 1, size - index);
+        array[index] = item;
+        size++;
+    }
+
+    // Removes the item at the specified index
+    @Override
+    public void remove(int index) {
+        if (index < 0 || index >= size)
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        System.arraycopy(array, index + 1, array, index, size - index - 1);
+        array[--size] = null; // Prevent memory leak
+    }
+
+    // Removes the first item
+    @Override
+    public void removeFirst() {
+        remove(0);
+    }
+
+    // Removes the last item
+    @Override
+    public void removeLast() {
+        if (size == 0)
+            throw new NoSuchElementException("List is empty");
+        array[--size] = null; // Prevent memory leak
+    }
+
+    // Obtains the item at the specified index
+    @Override
+    public T get(int index) {
+        if (index < 0 || index >= size)
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        return array[index];
+    }
+
+    // Obtains the first item
+    @Override
+    public T getFirst() {
+        if (size == 0)
+            throw new NoSuchElementException("List is empty");
+        return array[0];
+    }
+
+    // Obtains the last item
+    @Override
+    public T getLast() {
+        if (size == 0)
+            throw new NoSuchElementException("List is empty");
+        return array[size - 1];
+    }
+
+    // Clears the list
     @Override
     public void clear() {
-        arr = (T[]) new Object[DEFAULT_CAPACITY];
+        for (int i = 0; i < size; i++) {
+            array[i] = null;
+        }
         size = 0;
     }
 
-    private void increaseBuffer() {
-        T[] newArr = (T[]) new Object[arr.length * 2];
-        System.arraycopy(arr, 0, newArr, 0, arr.length);
-        arr = newArr;
+    // Converts the list to an array
+    @Override
+    public Object[] toArray() {
+        Object[] result = new Object[size];
+        System.arraycopy(array, 0, result, 0, size);
+        return result;
     }
 
-    private void checkIndex(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Index out of bounds");
-        }
-    }
-
+    // Iterator for iterating over the elements of the list
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
@@ -150,11 +139,67 @@ public class MyArrayList<T> implements List<T> {
 
             @Override
             public T next() {
-                if (!hasNext()) {
+                if (!hasNext())
                     throw new NoSuchElementException();
-                }
-                return arr[currentIndex++];
+                return array[currentIndex++];
             }
         };
+    }
+
+    // Sets the item at the specified index
+    @Override
+    public T set(int index, T item) {
+        if (index < 0 || index >= size)
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        T oldValue = array[index];
+        array[index] = item;
+        return oldValue;
+    }
+
+    // Checks if an item exists in the list
+    @Override
+    public boolean exists(Object object) {
+        for (int i = 0; i < size; i++) {
+            if (object == null && array[i] == null || object != null && object.equals(array[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Sorts the list
+    @Override
+    public void sort() {
+        for (int i = 0; i < size; i++) {
+            for (int j = i + 1; j < size; j++) {
+                if (((Comparable<T>) array[i]).compareTo(array[j]) > 0) {
+                    T temp = array[i];
+                    array[i] = array[j];
+                    array[j] = temp;
+                }
+            }
+        }
+    }
+
+    // Finds the index of the first occurrence of an item
+    @Override
+    public int indexOf(Object object) {
+        for (int i = 0; i < size; i++) {
+            if (object == null && array[i] == null || object != null && object.equals(array[i])) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    // Finds the index of the last occurrence of an item
+    @Override
+    public int lastIndexOf(Object object) {
+        for (int i = size - 1; i >= 0; i--) {
+            if (object == null && array[i] == null || object != null && object.equals(array[i])) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
