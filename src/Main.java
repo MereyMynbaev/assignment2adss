@@ -1,23 +1,36 @@
 public class Main {
     public static void main(String[] args) {
-        MyArrayList<Integer> myArrayList =  new MyArrayList<>();
+        MyStack<Integer> stack = new MyStack<>();
+        MyLinkedList<String> list = new MyLinkedList<>();
+        list.add("apple");
+        list.add("banana");
+        list.add("Qazaq");
+        list.add("Samat");
+        list.sort();
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println(list.get(i));
+        }
+        list.addLast("Elim");
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println(list.get(i));
+        }
 
-        myArrayList.addElement(11);
-        myArrayList.addElement(10);
-        myArrayList.addElement(9);
-        myArrayList.addElement(8);
-        myArrayList.addElement(7);
-        myArrayList.addElement(6);
+        // Pushing elements onto the stack
+        stack.push(10);
+        stack.push(20);
+        stack.push(30);
 
-        System.out.println("Value of element by index 3: " + myArrayList.getElement(3));
-        myArrayList.addElement(20, 3);
-        System.out.println("Value of element by index 3 after adding new value: " + myArrayList.getElement(3));
+        // Peeking the top element
+        System.out.println("Top element: " + stack.peek());
 
-        System.out.println("Size of myArrayList: " + myArrayList.getSize());
-        myArrayList.removeElement(3);
-        System.out.println("Size of myArrayList after removing: " + myArrayList.getSize());
-        System.out.println("Value of index 3 after removing: " + myArrayList.getElement(3));
-        myArrayList.clear();
-        System.out.println("Size of myArrayList after clear: " + myArrayList.getSize());
+        // Popping elements from the stack
+        System.out.println("Popped element: " + stack.pop());
+        System.out.println("Popped element: " + stack.pop());
+
+        // Checking if the stack is empty
+        System.out.println("Is stack empty? " + stack.empty());
+
+        // Getting the size of the stack
+        System.out.println("Size of stack: " + stack.size());
     }
 }
