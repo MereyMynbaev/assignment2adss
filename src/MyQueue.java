@@ -1,29 +1,34 @@
 public class MyQueue<T> {
-    private MyLinkedList<T> list;
+    private MyLinkedList<T> list = new MyLinkedList<>();
 
-    public MyQueue() {
-        list = new MyLinkedList<>();
+    // adds item to the end of the list
+    public T enqueue(T item) {
+        list.addLast(item);
+        return item;
     }
 
-    public void enqueue(T item) {
-        list.addElement(item);
+    // removes the first item of the list, which is the front of the queue
+
+    public T dequeue(){
+        T removingItem = peek();
+        list.removeFirst();
+        return removingItem;
     }
 
-    public T dequeue() {
-        if (isEmpty()) {
-            throw new RuntimeException("Queue is empty");
-        }
-        return list.remove(0);
-    }
+
+    // gets the first item of the list, which is the front of the queue
 
     public T peek() {
         if (isEmpty()) {
-            throw new RuntimeException("Queue is empty");
+            return null; // or throw exception
         }
-        return list.getData(0);
+        return list.getFirst();
     }
 
     public boolean isEmpty() {
-        return list.getSize() == 0;
+        return list.size() == 0;
+    }
+    public int size() {
+        return list.size();
     }
 }
