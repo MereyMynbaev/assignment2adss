@@ -1,29 +1,37 @@
-public class MyStack<T> {
-    private MyArrayList<T> list;
+public class MyStack<T>{
 
-    public MyStack() {
-        list = new MyArrayList<>();
+    private MyArrayList<T> list = new MyArrayList<>();
+
+    // pushes or add new element
+    public T push(T item) {
+        list.add(item);
+        return item;
     }
 
-    public void push(T item) {
-        list.addElement(item);
-    }
-
-    public T pop() {
-        if (isEmpty()) {
-            throw new RuntimeException("Stack is empty");
+    // Get Front Element
+    public T peek(){
+        if (empty()) {
+            return null; // or throw exception
         }
-        return list.removeElement(list.getSize() - 1);
+        return list.get(0);
     }
 
-    public T peek() {
-        if (isEmpty()) {
-            throw new RuntimeException("Stack is empty");
+    // Removes the head of the linked list
+    public T pop(){
+        if (empty()) {
+            return null; // or throw exception
         }
-        return list.getElement(list.getSize() - 1);
+        T removingItem = peek();
+        list.removeFirst();
+        return removingItem;
     }
 
-    public boolean isEmpty() {
-        return list.getSize() == 0;
+    // Returns whether the stack is empty
+    public boolean empty(){
+        return list.size() == 0;
+    }
+    // Returns the size of the stack
+    public int size() {
+        return list.size();
     }
 }
